@@ -46,11 +46,14 @@ Authenticate with `Authorization: Bearer <token>` (from register or login).
 - The app is stateless: no local files or sessions, so you can run many copies behind a load balancer.
 - Connection pooling via `psycopg_pool`; schema creation is guarded by a Postgres advisory lock so multiple workers can start at once.
 
-## Publish
+## Get it
+- Source: https://github.com/devsan95/phonebook
+- Image: https://hub.docker.com/r/santoshkumar55264/phonebook
+
 ```bash
-docker login
-docker build -t <dockerhub-user>/phonebook:1.0 .
-docker push <dockerhub-user>/phonebook:1.0
-gh repo create phonebook --public --source . --push
+docker pull santoshkumar55264/phonebook:latest
 ```
+To run the published image instead of building locally, replace `build: .` with
+`image: santoshkumar55264/phonebook:latest` in `docker-compose.yml`.
+
 For a public deployment, use a managed Postgres (Cloud SQL, RDS, Neon, Supabase) and set `DATABASE_URL` and `SECRET_KEY` as secrets on your host.
