@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: phonebook
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-phonebook}
+      POSTGRES_DB: phonebook
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phonebook -d phonebook"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  phonebook:
+    build: .
+    image: phonebook:latest
+    environment:
+      DATABASE_URL: postgresql://phonebook:${POSTGRES_PASSWORD:-phonebook}@db:5432/phonebook
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
